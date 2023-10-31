@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ru.demo.messenger"
+    >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <application
+        android:name=".MainApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme"
+        >
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"
+                />
+        </provider>
+        <activity
+            android:name=".splash.SplashScreenActivity"
+            android:screenOrientation="portrait"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".login.otherapp.OtherAppLoginActivity"
+            android:label="@string/other_app_login.title"
+            android:screenOrientation="portrait"
+            />
+        <activity
+            android:name=".login.signup.SignUpActivity"
+            android:label="@string/sign_up.title"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
+            />
+        <activity
+            android:name=".login.email.EmailLoginActivity"
+            android:label="@string/email_login.title"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
+            />
+        <activity
+            android:name=".login.restore.RestorePasswordActivity"
+            android:label="@string/restore_password.title"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible"
+            />
+        <activity
+            android:name=".login.phone.PhoneLoginActivity"
+            android:label="@string/phone_login.title"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
+            />
+        <activity
+            android:name=".agreement.AgreementActivity"
+            android:label="@string/agreement.title"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            />
+        <activity
+            android:name=".login.phone.address.SelectAddressActivity"
+            android:label="@string/select_address.title"
+            android:screenOrientation="portrait"
+            />
+        <activity
+            android:name=".login.phone.code.AuthCodeActivity"
+            android:label="@string/auth_code.title"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible"
+            />
+        <activity
+            android:name=".chats.single.SingleChatActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/ActionModeTheme"
+            />
+        <activity
+            android:name=".chats.single.info.MessageInfoActivity"
+            android:label="@string/message_info.title"
+            android:screenOrientation="portrait"
+            />
+        <activity
+            android:name=".chats.single.selection.ChatSelectionActivity"
+            android:label="@string/chat_selection.title"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".people.list.SelectPeopleActivity"
+            android:label="@string/select_people.title"
+            android:screenOrientation="portrait"
+            />
+        <activity
+            android:name=".chats.group.select.SelectGroupPeopleActivity"
+            android:label="@string/select_group_people.title"
+            android:screenOrientation="portrait"
+            />
+        <activity
+            android:name=".chats.group.create.CreateGroupActivity"
+            android:label="@string/create_group.new_group"
+            android:screenOrientation="portrait"
+            />
+        <activity
+            android:name=".chats.fullscreen.PictureViewActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.TransparentSystemBar"
+            />
+        <activity
+            android:name=".main.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActionModeTheme"
+            />
+        <activity
+            android:name=".people.profile.ProfileActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            />
+        <activity
+            android:name=".chats.single.attach.AttachPhotoActivity"
+            android:label="@string/attach_photo.title"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Translucent"
+            />
+        <activity
+            android:name=".profile.edit.EditProfileActivity"
+            android:label="@string/profile.edit.title"
+            android:theme="@style/AppTheme.TransparentSystemBar"
+            android:screenOrientation="portrait"
+            />
+        <activity
+            android:name=".chats.single.settings.ChatSettingsActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            />
+        <activity
+            android:name=".chats.single.settings.rename.RenameChatActivity"
+            android:label="@string/rename_chat.title"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustResize"
+            />
+        <activity
+            android:name=".main.AboutActivity"
+            android:label="@string/about.title"
+            android:screenOrientation="portrait"
+            />
+        <activity
+            android:name=".feedback.FeedbackActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity
+            android:name="ru.demo.data.device.EmptyPhotoActivity"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            />
+
+        <service
+            android:name=".MessengerFcmListenerService"
+            >
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".MessengerRegistrationIntentService"
+            android:exported="false"
+            />
+        <service
+            android:name=".chats.single.future.FutureMessagesService"
+            android:exported="false"
+            />
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="6b94f200fdedbd2b51baacb38248115ee76f3d3a"
+            />
+
+        <activity
+            android:name=".clearer.DataClearActivity"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".chats.single.selection.ChatSelectionActivity2"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>

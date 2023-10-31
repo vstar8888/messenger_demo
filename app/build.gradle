@@ -1,0 +1,174 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'io.fabric'
+//apply plugin: "com.github.triplet.play"
+
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+//        classpath "com.github.triplet.gradle:play-publisher:2.1.0"
+    }
+}
+
+//play {
+//    track = 'alpha'
+//    serviceAccountEmail = 'android-studio-publich-account@api-8487072835347721799-555225.iam.gserviceaccount.com'
+//    serviceAccountCredentials = file("../buildsystem/service_account_key.p12")
+//}
+
+android {
+    compileSdkVersion 29
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    dexOptions {
+        javaMaxHeapSize "2g"
+    }
+
+    def BOOLEAN = "boolean"
+    def TRUE = "true"
+    def FALSE = "false"
+    def IS_DEV_SERVER = "IS_DEV_SERVER"
+    def CRASHLYTICS_DISABLED = "CRASHLYTICS_DISABLED"
+
+    defaultConfig {
+        applicationId "de.zdb.chat"
+        minSdkVersion 16
+        targetSdkVersion 29
+        versionCode 11
+        versionName "1.0.6"
+
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
+        buildConfigField BOOLEAN, CRASHLYTICS_DISABLED, TRUE
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file("../buildsystem/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+        release {
+            storeFile file("../buildsystem/zdbmsg.jks")
+            storePassword "storePasswordzdbmsg"
+            keyAlias "keyAliaszdbmsg"
+            keyPassword "keyPasswordzdbmsg"
+        }
+    }
+
+    buildTypes {
+        debug {
+            // Disable fabric build ID generation for debug builds
+            ext.enableCrashlytics = false
+            buildConfigField BOOLEAN, IS_DEV_SERVER, TRUE
+        }
+        release {
+            signingConfig signingConfigs.release
+            buildConfigField BOOLEAN, IS_DEV_SERVER, FALSE
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField BOOLEAN, CRASHLYTICS_DISABLED, FALSE
+        }
+        qa {
+            initWith release
+            signingConfig signingConfigs.debug
+            versionNameSuffix '-TEST'
+            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            ext.betaDistributionGroupAliases = "testers-1"
+            ext.betaDistributionReleaseNotesFilePath = "../buildsystem/release_notes.txt"
+            buildConfigField BOOLEAN, CRASHLYTICS_DISABLED, FALSE
+            buildConfigField BOOLEAN, IS_DEV_SERVER, TRUE
+        }
+    }
+
+    //change default name for output build file
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "zdb_chat_${variant.versionName}_${variant.name}_code-${variant.versionCode}.apk"
+        }
+    }
+}
+
+android {
+    packagingOptions {
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE.txt'
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':signalr-client-sdk-android-release')
+
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+    implementation rootProject.ext.kotlin.stdlib
+
+    implementation 'com.google.firebase:firebase-core:17.4.4'
+    implementation 'com.google.firebase:firebase-messaging:20.2.3'
+
+    Map<String, String> android = rootProject.ext.android
+    implementation(
+            android.design,
+            android.support,
+            android.appcompat,
+            android.recyclerView,
+            android.cardView,
+            'androidx.constraintlayout:constraintlayout:1.1.3',
+    )
+
+    Map<String, String> network = rootProject.ext.network
+    implementation(
+            network.retrofit,
+            network.converterGson,
+            network.okhttpLogging,
+    )
+
+    Map<String, String> rx = rootProject.ext.rx
+    implementation(
+            rx.java,
+            rx.android,
+            rx.retrofitAdapter,
+    )
+
+    Map<String, String> helpers = rootProject.ext.helpers
+    implementation(
+            helpers.butterknife,
+            helpers.threetenabp,
+            helpers.permissions,
+    )
+    kapt helpers.butterknife_compiler
+    kapt helpers.permissionsAP
+
+    Map<String, String> fresco = rootProject.ext.fresco
+    implementation(
+            fresco.fresco,
+            fresco.imagepipeline,
+            fresco.photodraweeview,
+    )
+
+    debugImplementation(
+            stetho.stetho,
+            stetho.okhttp,
+    )
+
+    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
+        transitive = true
+    }
+
+}
+
+apply plugin: 'com.google.gms.google-services'
